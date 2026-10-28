@@ -1,0 +1,6 @@
+from node:18.20.8-slim
+WORKDIR /app
+COPY . .
+run npm install
+CMD npm start
+

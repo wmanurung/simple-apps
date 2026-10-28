@@ -1,0 +1,57 @@
+services:
+
+  backend:
+    build: ./apps
+    restart: always
+    links:
+      - db
+    ports:
+      - "3000"
+    volumes:
+      - app-data:/apps/public/images
+
+  db:
+    image: "mariadb"
+    restart: always
+    links:
+      - phpmyadmin
+    ports:
+      - "3306"
+    environment:
+      - DB_NAME=training
+      - DB_HOST=db 
+      - DB_USER=peserta
+      - DB_PASSWORD=password
+      - APP_PORT=3000
+    volumes:
+      #- ./apps/database/:/docker-entrypoint-initdb.d
+     # - db-data:/var/lib/mysql
+      - app-data:/apps/public/images
+DB Run Service
+DB:
+  imge: mariadb
+  restart: always
+  links:
+    - phpmyadmin
+  ports:
+    - "3306"  
+    
+  phpmyadmin:
+    image: "phpmyadmin"
+    restart: always
+    ports:
+      - "7080:80"
+    environment:
+      - PMA_HOST=db
+
+  web:
+    build: ./nginx
+    restart: always
+    ports:
+    - "80:80"
+    depends_on:
+    - backend
+
+volumes:
+  app-data:
+  db-data:
